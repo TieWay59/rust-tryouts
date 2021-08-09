@@ -51,3 +51,56 @@ pub fn reverse(x: i32) -> i32 {
     rev(x).unwrap_or(0)
 }
 ```
+
+## upper_bound
+
+正经 `upper_bound` 的对应在 rust 的 std 里是 `partition_point` 这个 v1.52.0 才让用。
+
+如果你使用了 `binary_search` 就会遇到很无语的情况，看源码的实现就明白了。简单地说，它是不稳定的，如果有一段相同的数字，返回其中任何（\*）一个下标都有可能（\* 针对每个数据是确定的，但不能保证头尾）。
+
+```rust
+impl Solution {
+    // https://leetcode-cn.com/problems/next-permutation/solution/
+    pub fn next_permutation(nums: &mut Vec<i32>) {
+        for i in (0..nums.len() - 1).rev() {
+            if nums[i] < nums[i + 1] {
+                nums[i + 1..].reverse();
+                // let j = i + 1 + nums[i + 1..].partition_point(|&x| x <= nums[i]); stable 1.52.0
+                // nums.swap(i, j);
+                for j in i + 1..nums.len() {
+                    if nums[i] < nums[j] {
+                        nums.swap(i, j);
+                        break;
+                    }
+                }
+                return;
+            }
+        }
+        nums.reverse();
+    }
+}
+/*
+Line 7, Char 47: use of unstable library feature 'partition_point': new API (solution.rs)
+  |
+7 |                 let j = i + 1 + nums[i + 1..].partition_point(|&v| v <= nums[i]);
+  |                                               ^^^^^^^^^^^^^^^
+  |
+  = note: see issue #73831 <https://github.com/rust-lang/rust/issues/73831> for more information
+error: aborting due to previous error
+*/
+
+```
+
+## for 写法
+
+有时候 n 不是 usize 类型，这样会导致所有的 i 都不是。
+
+如果后续要把 i 作为下标，就每一处都要转型，比较烦。
+
+可以像下面这样避开一部分。
+
+```rust
+for i in 1..n as usize {
+    // --snip--
+}
+```
