@@ -104,3 +104,13 @@ for i in 1..n as usize {
     // --snip--
 }
 ```
+
+## Option 类的比较
+
+默认 None 是 Some 的这个特性，我觉得很和谐！
+
+```rust
+    assert_eq!(Some(1) > None, true);
+    assert_eq!(Some(i32::MIN) > None, true);
+    assert_eq!(Some("hello".to_string()) > None, true);
+```
