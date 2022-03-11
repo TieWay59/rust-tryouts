@@ -1,6 +1,7 @@
 
 /src
 /target
+/workspace
 
 *.lock
 *.toml
